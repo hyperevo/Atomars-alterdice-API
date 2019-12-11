@@ -11,10 +11,16 @@ deps = {
 
 install_requires =  deps['api']
 
+with open("README.rst", "r") as fh:
+    long_description = fh.read()
+
 setup(
-    name='Atomars and Alterdice Python API',
-    version='0.1.2',
+    name='atom_alter_api',
+    version='0.1.3',
     description='An unofficial python library for communication with the Atomars and Alterdice exchanges API',
+    long_description=long_description,
+    long_description_content_type="text/x-rst",
+    url="https://github.com/hyperevo/Atomars-alterdice-API",
     author='Tommy Mckinnon',
     author_email='tommy@HeliosProtocol.io',
     include_package_data=True,
@@ -24,4 +30,5 @@ setup(
     setup_requires=['setuptools-markdown'],
     license='MIT',
     zip_safe=False,
+    python_requires='>=3.6',
 )

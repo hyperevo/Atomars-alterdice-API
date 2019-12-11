@@ -11,22 +11,13 @@ Atomars Alterdice API
 This is an unofficial python API for Atomars and Alterdice exchanges.
 
 Install
--------
+-----------------------
 
-1)  Clone this repo
+Install using pip
 
-    .. code:: bash
+.. code:: bash
 
-        $ cd ~/
-        $ git clone https://github.com/hyperevo/Atomars-alterdice-API
-
-
-2)  Install using pip
-
-    .. code:: bash
-
-        $ cd Atomars-alterdice-API
-        $ pip3 install -e .
+    $ pip install atom-alter-api
 
 
 Usage
@@ -60,3 +51,22 @@ Note: Many of the functions in the API are async. So you have to use await or en
 
 
 See the docs folder for more info. Also see tests for some more code examples.
+
+
+Install for development
+-----------------------
+
+1)  Clone this repo
+
+    .. code:: bash
+
+        $ cd ~/
+        $ git clone https://github.com/hyperevo/Atomars-alterdice-API
+
+
+2)  Install using pip
+
+    .. code:: bash
+
+        $ cd Atomars-alterdice-API
+        $ pip3 install -e .

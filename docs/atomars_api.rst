@@ -18,12 +18,13 @@ Before making any requests, you must first login:
 Creating the API class
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-**__init__(username, password, API_url = 'https://api.atomars.com/v1/', default_pair ='HLSETH')**
+**AtomarsAPI(username, password, API_url = 'https://api.atomars.com/v1/', default_pair ='HLSETH')**
 
 *Parameters:*
+
 1. Username
 2. Password
-3. API url. https://api.atomars.com/v1/ for atomars, https://api.alterdice.com/v1/ for alterdice
+3. API url. https://api.atomars.com/v1/ for Atomars, https://api.alterdice.com/v1/ for Alterdice
 4. Your default pair. Some functions will use this pair by default so you don't need to keep specifying the pair parameter.
 
 None
