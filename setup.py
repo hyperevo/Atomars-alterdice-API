@@ -16,7 +16,7 @@ with open("README.rst", "r") as fh:
 
 setup(
     name='atom_alter_api',
-    version='0.1.3',
+    version='0.1.4',
     description='An unofficial python library for communication with the Atomars and Alterdice exchanges API',
     long_description=long_description,
     long_description_content_type="text/x-rst",
