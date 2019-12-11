@@ -63,7 +63,6 @@ class AtomarsAlterdiceAPI(BaseLoggingService):
         self.username = username
         self.password = password
         self.base_url = API_url
-
     #
     # Networking functionality
     #
@@ -182,7 +181,7 @@ class AtomarsAlterdiceAPI(BaseLoggingService):
 
         raise APIResponseError("No balances were returned.")
 
-    async def get_balance(self, currency: str) -> float:
+    async def get_balance(self, currency: str) -> Dict:
         balances = await self.get_balances()
 
         if currency in balances:
@@ -251,7 +250,7 @@ class AtomarsAlterdiceAPI(BaseLoggingService):
         raise APIResponseError('limit_sell Failed. Response {}'.format(response))
 
 
-    async def get_order_history(self) -> Dict:
+    async def get_order_history(self) -> List[Dict]:
         self.logger.debug('Executing get_order_history')
         url = self.base_url + 'private/history'
         payload = {
@@ -267,7 +266,7 @@ class AtomarsAlterdiceAPI(BaseLoggingService):
 
         raise APIResponseError('get_order_history Failed. Response {}'.format(response))
 
-    async def get_active_orders(self, pair: str = None) -> List:
+    async def get_active_orders(self, pair: str = None) -> List[Dict]:
         self.logger.debug('Executing get_active_orders')
         url = self.base_url + 'private/orders'
         payload = {
@@ -298,13 +297,7 @@ class AtomarsAlterdiceAPI(BaseLoggingService):
             filtered_active_orders = self.active_orders
         return filtered_active_orders
 
-    async def is_order_complete(self, order_id) -> bool:
-        order_history = await self.get_order_history()
 
-        for order in order_history:
-            if order['id'] == order_id:
-                return True
-        return False
 
 
     async def delete_order(self, order_id: int) -> None:
@@ -331,6 +324,43 @@ class AtomarsAlterdiceAPI(BaseLoggingService):
         else:
             raise APIExecutionError('delete_order Failed. Response {}'.format(response))
 
+
+
+
+    async def get_ticker_list(self) -> List[Dict]:
+        url = self.base_url + 'public/symbols'
+        self.logger.debug('Executing get_ticker_list')
+        params = {}
+        response = await self.send_get_request_and_get_response(url, params)
+
+        if 'data' not in response:
+            raise APIResponseError('get_ticker_list failed. Response {}'.format(response))
+
+        self.logger.debug('get_ticker_list Succeeded')
+        return response['data']
+
+
+
+    async def get_order_book(self, pair: str = None) -> Dict:
+        if pair is None:
+            pair = self.default_pair
+        url = self.base_url + 'public/book'
+        self.logger.debug('Executing get_order_book for pair {}'.format(pair))
+        params = {
+            'pair': pair,
+        }
+        response = await self.send_get_request_and_get_response(url, params)
+
+        if 'data' not in response:
+            self.logger.debug('get_order_book Failed. Response {}'.format(response))
+
+        self.logger.debug('get_order_book Succeeded')
+        return response['data']
+
+    #
+    # Helper functions
+    #
+
     async def delete_all_orders(self, pair: str = None, buy_or_sell: int = None) -> None:
         # Made it async
         if pair is None:
@@ -352,38 +382,15 @@ class AtomarsAlterdiceAPI(BaseLoggingService):
         if len(tasks) > 0:
             await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
 
+    async def is_order_complete(self, order_id: int) -> bool:
+        order_history = await self.get_order_history()
 
-    async def get_ticker_list(self) -> List[Dict]:
-        url = self.base_url + 'public/symbols'
-        self.logger.debug('Executing get_ticker_list')
-        params = {}
-        response = await self.send_get_request_and_get_response(url, params)
+        for order in order_history:
+            if order['id'] == order_id:
+                return True
+        return False
 
-        if 'data' not in response:
-            raise APIResponseError('get_ticker_list failed. Response {}'.format(response))
-
-        self.logger.debug('get_ticker_list Succeeded')
-        return response['data']
-
-
-
-    async def get_order_book(self, pair: str = None):
-        if pair is None:
-            pair = self.default_pair
-        url = self.base_url + 'public/book'
-        self.logger.debug('Executing get_order_book for pair {}'.format(pair))
-        params = {
-            'pair': pair,
-        }
-        response = await self.send_get_request_and_get_response(url, params)
-
-        if 'data' not in response:
-            self.logger.debug('get_order_book Failed. Response {}'.format(response))
-
-        self.logger.debug('get_order_book Succeeded')
-        return response['data']
-
-    async def get_lowest_sell(self, pair: str = None, order_book: Dict = None) -> float:
+    async def get_lowest_sell(self, pair: str = None, order_book: Dict = None) -> Decimal:
         if pair is None:
             pair = self.default_pair
 
@@ -398,7 +405,7 @@ class AtomarsAlterdiceAPI(BaseLoggingService):
 
         return sell_prices[0]
 
-    async def get_highest_buy(self, pair: str = None, order_book: Dict = None) -> float:
+    async def get_highest_buy(self, pair: str = None, order_book: Dict = None) -> Decimal:
         if pair is None:
             pair = self.default_pair
 
@@ -413,7 +420,7 @@ class AtomarsAlterdiceAPI(BaseLoggingService):
 
         return buy_prices[-1]
 
-    async def get_lowest_sell_and_highest_buy(self, pair: str = None, order_book: Dict = None) -> Tuple[Optional[float], Optional[float]]:
+    async def get_lowest_sell_and_highest_buy(self, pair: str = None, order_book: Dict = None) -> Tuple[Optional[Decimal], Optional[Decimal]]:
         if pair is None:
             pair = self.default_pair
 

@@ -13,7 +13,7 @@ install_requires =  deps['api']
 
 setup(
     name='Atomars and Alterdice Python API',
-    version='0.1.1',
+    version='0.1.2',
     description='An unofficial python library for communication with the Atomars and Alterdice exchanges API',
     author='Tommy Mckinnon',
     author_email='tommy@HeliosProtocol.io',
